@@ -17,6 +17,7 @@ func (rs ProfilingResources) Routes() chi.Router {
 	r.Route("/", func(r chi.Router) {
 		r.Get("/rate/{id}", rs.ReadRateByUserID)
 		r.Post("/", rs.Create)
+		r.Get("/spec-rate/{spec_id}", rs.ReadSpecRate)
 
 	})
 	return r
@@ -27,10 +28,12 @@ func (rs ProfilingResources) Create(w http.ResponseWriter, r *http.Request) {
 	var pw models.ProfilingWrapper
 	err := wrappers.JSONDecodeWrapper(w, r, &pw.Single)
 	if err != nil {
+		http.Error(w, err.Error(), 400)
 		return
 	}
 	err = pw.Create()
 	if err != nil {
+		http.Error(w, err.Error(), 400)
 		return
 	}
 	json.NewEncoder(w).Encode(pw.Single)
@@ -54,4 +57,22 @@ func (rs ProfilingResources) ReadRateByUserID(w http.ResponseWriter, r *http.Req
 
 	json.NewEncoder(w).Encode(pw.Array)
 
+}
+
+func (rs ProfilingResources) ReadSpecRate(w http.ResponseWriter, r *http.Request) {
+	var pw models.ProfilingWrapper
+	id := chi.URLParam(r, "spec_id")
+	parsedID, err := strconv.Atoi(id)
+	if err != nil {
+		http.Error(w, err.Error(), 400)
+		return
+	}
+	pw.Single.SpecID = int64(parsedID)
+	res, err := pw.ReadSpecRate()
+	if err != nil {
+		http.Error(w, err.Error(), 400)
+		return
+	}
+
+	json.NewEncoder(w).Encode(res)
 }

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 
@@ -32,5 +33,8 @@ func main() {
 		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
 		AllowCredentials: true,
 	})
+	fmt.Println("assets serving")
+	fs := http.FileServer(http.Dir("./static"))
+	r.Mount("/static", http.StripPrefix("/static", fs))
 	log.Fatal(http.ListenAndServe(":8181", c.Handler(r)))
 }

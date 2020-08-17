@@ -11,6 +11,7 @@ type CallLog struct {
 	ID           int64     `json:"id"`
 	UserID       int64     `json:"user_id"`
 	User         *User     `pg:"fk:user_id" json:"user"`
+	CallID       int64     `json:"call_id"`
 	TimeCalled   time.Time `json:"time_called"`
 	CallDuration string    `json:"call_duration"`
 
@@ -51,7 +52,7 @@ func (tw *CallLogWrapper) Read() error {
 func (tw *CallLogWrapper) ReadByUserID() error {
 	db := pg.Connect(services.PgOptions())
 	defer db.Close()
-	err := db.Model(&tw.Single).Where(`user_id = ?`, tw.Single.UserID).Select()
+	err := db.Model(&tw.Array).Where(`user_id = ?`, tw.Single.UserID).Relation("User").Select()
 	if err != nil {
 		return err
 	}

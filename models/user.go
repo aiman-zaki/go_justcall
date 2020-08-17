@@ -55,6 +55,7 @@ func (tw *UserWrapper) Login() (error, int16) {
 			return errors.New("Invalid Credential"), 401
 		}
 		err = db.Model(&tw.Single).
+			Where("email = ?", tw.Single.Email).
 			Select()
 		tw.GenerateToken()
 		if err != nil {
@@ -113,12 +114,26 @@ func (tw *UserWrapper) ReadProfile() error {
 }
 
 func (tw *UserWrapper) Update() error {
+
 	db := pg.Connect(services.PgOptions())
+	db.AddQueryHook(services.DbLogger{})
+
 	defer db.Close()
-	_, err := db.Model(&tw.Single).WherePK().Update()
-	if err != nil {
-		return err
+	if tw.Single.Password != "" {
+		hashed := tw.HashAndSalt([]byte(tw.Single.Password))
+		tw.Single.Password = hashed
+		_, err := db.Model(&tw.Single).WherePK().Set("name = ?", tw.Single.Name).Set("username = ?", tw.Single.Username).Set("email = ?", tw.Single.Email).Set("phone = ?", tw.Single.Phone).Set("password = ?", tw.Single.Password).Update()
+		if err != nil {
+			return err
+		}
+	} else {
+		_, err := db.Model(&tw.Single).WherePK().Set("name = ?", tw.Single.Name).Set("username = ?", tw.Single.Username).Set("email = ?", tw.Single.Email).Set("phone = ?", tw.Single.Phone).Update()
+		if err != nil {
+			return err
+		}
+
 	}
+
 	return nil
 }
 func (tw *UserWrapper) Delete() error {

@@ -16,14 +16,14 @@ type CallStatus struct {
 }
 
 type CallStatusWrapper struct {
-	Single Spec
-	Array  []Spec
+	Single CallStatus
+	Array  []CallStatus
 }
 
 func (tw *CallStatusWrapper) Create() error {
 	db := pg.Connect(services.PgOptions())
 	defer db.Close()
-	err := db.Insert(tw.Single)
+	err := db.Insert(&tw.Single)
 	if err != nil {
 		return err
 	}

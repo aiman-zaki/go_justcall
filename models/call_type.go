@@ -16,14 +16,14 @@ type CallType struct {
 }
 
 type CallTypeWrapper struct {
-	Single Spec
-	Array  []Spec
+	Single CallType
+	Array  []CallType
 }
 
 func (tw *CallTypeWrapper) Create() error {
 	db := pg.Connect(services.PgOptions())
 	defer db.Close()
-	err := db.Insert(tw.Single)
+	err := db.Insert(&tw.Single)
 	if err != nil {
 		return err
 	}

@@ -16,6 +16,15 @@ type Spec struct {
 	DateUpdated time.Time `json:"date_updated"`
 }
 
+type SpecRate struct {
+	SpecID    int64   `json:"spec_id"`
+	SumRate   float64 `json:"sum_rate"`
+	CountRate int64   `json:"count_rate"`
+	CallLogID int64   `json:"call_log_id"`
+	UserID    int64   `json:"user_id"`
+	CallID    int64   `json:"call_id"`
+}
+
 type SpecWrapper struct {
 	Single Spec
 	Array  []Spec
@@ -24,7 +33,7 @@ type SpecWrapper struct {
 func (tw *SpecWrapper) Create() error {
 	db := pg.Connect(services.PgOptions())
 	defer db.Close()
-	err := db.Insert(tw.Single)
+	err := db.Insert(&tw.Single)
 	if err != nil {
 		return err
 	}

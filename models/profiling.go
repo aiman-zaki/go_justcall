@@ -67,6 +67,21 @@ func (tw *ProfilingWrapper) ReadRateByUserID(id int64) error {
 	return nil
 }
 
+func (tw *ProfilingWrapper) ReadComments(id int64) error {
+	db := pg.Connect(services.PgOptions())
+	db.AddQueryHook(services.DbLogger{})
+	defer db.Close()
+	err := db.Model(&tw.Array).Relation("CallLog").
+		ColumnExpr("profilling.*").
+		ColumnExpr(`u.name as "profilling__call_log__user__name"`).
+		Join(`JOIN users AS u ON "call_log"."call_id" = "u"."id"`).
+		Where(`"call_log"."user_id" = ?`, id).Select()
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 //ReadSpecRate : implemtation of getSpecRate.php
 func (tw *ProfilingWrapper) ReadSpecRate() ([]SpecRate, error) {
 	var res []SpecRate

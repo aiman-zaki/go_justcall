@@ -113,6 +113,16 @@ func (tw *UserWrapper) ReadProfile() error {
 	return nil
 }
 
+func (tw *UserWrapper) ReadPublicProfile() error {
+	db := pg.Connect(services.PgOptions())
+	defer db.Close()
+	err := db.Model(&tw.Single).WherePK().Column("name").Select()
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func (tw *UserWrapper) Update() error {
 
 	db := pg.Connect(services.PgOptions())

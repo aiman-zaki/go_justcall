@@ -31,9 +31,9 @@ func InitialDb() {
 	rw.Create()
 
 	var uw UserWrapper
-	uw.Single = User{0, "AIMAN", "AIMAN", "aiman@test.com", "12345679", "01298422142", "", 1, &Role{}, time.Now(), time.Now(), "", ""}
+	uw.Single = User{0, "AIMAN", "AIMAN", "aiman@test.com", "123456789", "01298422142", "", 1, &Role{}, time.Now(), time.Now(), "", ""}
 	uw.Register()
-	uw.Single = User{0, "AIMAN", "AIMAN", "aiman1@test.com", "12345679", "01298422142", "", 1, &Role{}, time.Now(), time.Now(), "", ""}
+	uw.Single = User{0, "AIMAN", "AIMAN", "aiman1@test.com", "123456789", "01298422142", "", 1, &Role{}, time.Now(), time.Now(), "", ""}
 	uw.Register()
 
 	var csw CallStatusWrapper

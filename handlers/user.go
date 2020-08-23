@@ -30,6 +30,19 @@ func (rs UserResources) Routes() chi.Router {
 	return r
 }
 
+func (rs UserResources) ReadPublicProfileByID(w http.ResponseWriter, r *http.Request) {
+	var uw models.UserWrapper
+	id := chi.URLParam(r, "id")
+	parsedID, err := strconv.Atoi(id)
+	if err != nil {
+
+		http.Error(w, err.Error(), 400)
+		return
+	}
+	uw.Single.ID = int64(parsedID)
+
+}
+
 func (rs UserResources) ReadProfile(w http.ResponseWriter, r *http.Request) {
 	jwtToken := r.Header.Get("Authorization")
 	split := strings.Split(jwtToken, " ")

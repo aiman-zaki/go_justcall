@@ -18,6 +18,7 @@ func (rs ProfilingResources) Routes() chi.Router {
 		r.Get("/rate/{id}", rs.ReadRateByUserID)
 		r.Post("/", rs.Create)
 		r.Get("/spec-rate/{spec_id}", rs.ReadSpecRate)
+		r.Get("/comments/{id}", rs.ReadComments)
 
 	})
 	return r
@@ -50,6 +51,26 @@ func (rs ProfilingResources) ReadRateByUserID(w http.ResponseWriter, r *http.Req
 	}
 
 	err = pw.ReadRateByUserID(int64(parsedID))
+	if err != nil {
+		http.Error(w, err.Error(), 400)
+		return
+	}
+
+	json.NewEncoder(w).Encode(pw.Array)
+
+}
+
+func (rs ProfilingResources) ReadComments(w http.ResponseWriter, r *http.Request) {
+	var pw models.ProfilingWrapper
+	id := chi.URLParam(r, "id")
+	parsedID, err := strconv.Atoi(id)
+	if err != nil {
+
+		http.Error(w, err.Error(), 400)
+		return
+	}
+
+	err = pw.ReadComments(int64(parsedID))
 	if err != nil {
 		http.Error(w, err.Error(), 400)
 		return

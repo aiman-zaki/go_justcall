@@ -37,6 +37,7 @@ func (rs AuthResources) Register(w http.ResponseWriter, r *http.Request) {
 func (rs AuthResources) Login(w http.ResponseWriter, r *http.Request) {
 	var aw models.UserWrapper
 	wrappers.JSONDecodeWrapper(w, r, &aw.Single)
+	fmt.Println(aw.Single)
 	err, httpError := aw.Login()
 	if err != nil {
 		if httpError == 401 {
